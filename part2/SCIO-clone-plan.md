@@ -1,13 +1,14 @@
 # SCIO Clone — Build Plan
 
-**Author:** Hoang Tran · **Date:** 2026-10-14 · **Status:** v1, for discussion
+**Author:** Hoang Tran · **Date:** 2026-10-14 · **Status:** v2, numbers re-checked against the live product and help center
 
 ## 1. Summary
 
 - **What:** A multi-tenant digital-signage CMS plus a player runtime. Customers pair screens, upload content, arrange it into playlists, split screens and schedules, push it to a fleet, and see what is playing. Playback keeps working when the network goes down.
 - **MVP, 22 weeks:** CMS, players for Android, Windows/macOS/Linux, Samsung Tizen and LG webOS, 8 apps, schedules, teams, per-screen billing and proof of play. This is enough to sell to a small or mid-size business with 5–500 screens.
-- **Phase 2, about 20 more weeks:** Designer (a Canva-style editor), data sources, SSO, sub-accounts and white-label, a public API, and more apps.
+- **Phase 2, about 16 more weeks:** Designer (a Canva-style editor), data sources, SSO, sub-accounts and white-label, a public API, and more apps.
 - **Team:** 7 engineers, 1 QA engineer, 1 product designer/PM. This size gets the MVP out in under six months without coordination costs taking over.
+- **AI-assisted estimate:** the team works with AI coding assistants. I apply a per-epic AI factor instead of one flat discount: about 17% saving overall (135 → 112 engineer-weeks for the MVP). Without AI the same MVP needs about 24 weeks, not 22.
 - **Biggest bet:** one TypeScript player runtime wrapped in thin native shells. Eight of the 14 platforms OptiSigns supports run HTML5, so one renderer covers most of the market.
 
 ## 2. What I learned from the product
@@ -16,16 +17,16 @@ I used a Pro Plus trial (app.optisigns.com) and read the help center end to end:
 
 | Area | What it actually is |
 |---|---|
-| **Screens** | Pair with a 6-digit code. Each screen has tags, folders, location, orientation (0/90/180/270), scale mode, background and mute. One of three things is bound to it: an **asset, a playlist or a schedule**. A separate **operational schedule** powers the TV on/off through HDMI-CEC or RS-232. An **OnHold** folder frees a licence without deleting the screen. Status is sent every 30 s, and a screen is marked offline after 10 min of silence. |
+| **Screens** | Pair with a 6-digit code (with an option for lowercase codes). Each screen has tags, folders, location, orientation (0/90/180/270), scale mode, background music and mute. One of three things is bound to it: an **asset, a playlist or a schedule**. A separate **operational schedule** powers the TV on/off through HDMI-CEC or RS-232. An **OnHold** folder frees a licence without deleting the screen. Status is sent every 30 s, and a screen is marked offline after 10 min of silence. |
 | **Players** | 14 platforms: Windows, macOS, Linux, Android, Fire OS, Amazon Signage, Apple TV, iOS, ChromeOS, Samsung Tizen/SSSP, LG webOS, BrightSign, Roku, Raspberry Pi. OptiSigns also sells its own hardware (OptiStick, Pro, ProMax) with built-in device management, which enables reboot, screenshot, Wi-Fi, time zone and bulk commands. |
-| **Files/Assets** | Images, video and documents (up to 25 MB per file and 1 GB storage on Free), folders, sharing, favourites, trash. **About 150 "apps"** are configured web content: YouTube, Weather, Power BI, Tableau, Google Slides, RSS, Teams Rooms, Salesforce, Grafana, Website, Split Screen and more. |
-| **Playlists** | Ordered items, each with a duration, plus transitions, shuffle and per-type scaling. Advanced settings add **content-tag rules** (different screens play different items from the same playlist), **nested sub-playlists with their own schedule**, resume-on-next-play, max duration and background music. The UI shows total size and runtime. |
-| **Schedules** | A calendar of events with daily, weekly, monthly or custom recurrence and time-zone handling. When events overlap, the last-updated one wins. Items have live/expire dates. |
-| **Designer / Templates** | A full canvas editor: text, shapes, frames, filters, animation, layers and version history. Its **widgets embed a Playlist, Apps, Video, Weather, Time and Date**, and **repeaters** bind to data. There is a template library and an "AI Designer". |
+| **Files/Assets** | Images, video and documents (up to 25 MB per file and 1 GB storage on Free), folders, sharing, favourites, trash, plus Feeds. **133 "apps"** in the Add App picker (25 of them on the Free plan) are configured web content: YouTube, Weather, Power BI, Tableau, Google Slides, RSS, Teams Rooms, Salesforce, Grafana, Website, Split Screen and more. |
+| **Playlists** | Ordered items, each with a duration, plus transitions, shuffle and per-type scaling. Advanced settings add **content-tag rules** (different screens play different items from the same playlist), **nested sub-playlists with their own schedule**, resume-on-next-play and max duration per item. The UI shows total size and runtime. |
+| **Schedules** | A calendar of events with daily, weekly, monthly or custom recurrence and time-zone handling. The editor warns about overlaps; when they are intentional, the last-updated schedule wins. Each screen plays in its own local time zone. Items have live/expire dates. |
+| **Designer / Templates** | A full canvas editor, and it is **included in the Free plan**. Its **widgets embed a Playlist, Apps, Video, Weather, Time and Date**, and **repeaters** bind to data. There is a template library with a "Try AI Designer" entry point. |
 | **Engage** | Touch kiosks, QR overlays, lift-and-learn with IoT sensors, AI camera and check-in. It is a separate plan, with a 1-device trial on other plans. |
-| **Analytics** | Proof of Play is opt-in per device, because it "slightly increase[s] network usage". There is also AI Analytics. |
-| **Account** | Teams with screen quotas, roles (Owner/Super Admin/Admin/User), sub-account billing, branding and custom domain, audit log, monitoring alerts, SAML SSO, API keys, integrations, share links, data sources and tags. |
-| **Commercial** | Licences are sold per screen. Plans are Free (3 screens), Standard, Pro Plus, Engage and Enterprise, plus add-ons: Video Wall, OptiSound, AeriCast, Engage, and Custom Domain at $10/mo. **Entitlements depend on the plan *and* the device type**: the Free plan only runs on OptiSigns hardware and desktop operating systems. |
+| **Analytics** | Proof of Play and AI Analytics. Proof of Play is only on Pro Plus and Enterprise: it is switched on for the account, then per screen in Edit Screen, and its real-time upload can be turned off to save bandwidth. |
+| **Account** | Teams with screen quotas, roles (Owner, Super Admin, Admin, User, **Content Proposal, Content Approval**, Read Only, plus **custom roles**), MFA, sub-account billing, branding and custom domain, audit log, monitoring alerts, SAML SSO, API keys, external communications (RS-232), integrations, share links, data sources and tags. |
+| **Commercial** | Licences are sold per screen. Plans are Free (3 screens), Standard, Pro Plus, Engage and Enterprise, plus add-ons: Video Wall, OptiSound, AeriCast, Engage, and Custom Domain at $10/mo. **Entitlements depend on the plan *and* the device type**: the Free plan only runs on OptiSigns hardware (Android Player, Pro/ProMax, OptiKiosk), Windows, macOS, Linux and Raspberry Pi; not on Fire TV, generic Android, smart TVs, Roku or Apple. The trial is Pro Plus with 2 screens. |
 
 ## 3. The one thing I did not expect, and what it changed
 
@@ -50,7 +51,8 @@ This changed the plan in three ways:
 ## 4. Scope
 
 **MVP (in):**
-- Accounts, teams and roles.
+- Accounts, teams, the 7 built-in roles, custom roles and MFA.
+- Content approval: Content Proposal users submit, Content Approval users publish.
 - Pairing.
 - Screen management: folders, tags, bulk edit, orientation, scale.
 - Asset library: upload, transcode, thumbnails, PDF/PPTX → pages.
@@ -73,6 +75,8 @@ This changed the plan in three ways:
 - Sub-accounts, white-label and custom domain.
 - An app SDK and about 30 more apps (Power BI, Teams Rooms, Google Calendar…).
 - Mobile admin app.
+
+**The biggest scope bet:** Designer is in the Free plan, so the MVP does not match even OptiSigns' cheapest tier. MVP customers upload files or bring designs from Canva (a top-row app in the picker). Designer costs about 36 engineer-weeks; putting it in the MVP would push launch by about 6 weeks. This is the first decision I would confirm with OptiSigns.
 
 **Deliberately out, and why:**
 - **Engage** (kiosks, AI camera, IoT): a separate product with separate buyers.
@@ -109,37 +113,73 @@ This changed the plan in three ways:
 | 3–6 | **M1 One screen, offline** | Pairing, upload and transcode, playlists, manifest compiler v1, player download/cache/playback, heartbeat/status. | This is the core loop. Everything else is variations on it. |
 | 7–10 | **M2 A fleet** | Folders, tags, bulk edit, push to screens, schedules engine and calendar UI, live/expire, split-screen zones. | Customers buy fleets. Schedules depend on the manifest compiler from M1. |
 | 11–14 | **M3 Apps** | App framework (config schema + sandboxed web view + refresh policy) and the 8 apps. | Apps are what make signage feel alive. The framework has to exist before the long tail of apps. |
-| 15–18 | **M4 Business** | Teams/roles/invites, plans and entitlements (plan × device type), Stripe per-screen billing, OnHold, proof of play, screenshot/reload, offline alerts. | Billing comes after the product works, but before beta, because entitlements touch every module. |
+| 15–18 | **M4 Business** | Teams, built-in and custom roles, approval flow, invites, plans and entitlements (plan × device type), Stripe per-screen billing, OnHold, proof of play, screenshot/reload, offline alerts. | Billing comes after the product works, but before beta, because entitlements touch every module. |
 | 19–22 | **M5 Hardening + beta** | Tizen and webOS shells, a 10k-device load test with simulated players, security review, onboarding flow, docs, 5 beta customers. | TV platforms reuse the core once it is stable. The load test needs real code to test. |
-| 23–42 | **Phase 2** | Designer (about 12 weeks with 2 FE + 1 BE), data sources, operational schedule, SSO/audit/API, sub-accounts/white-label, BrightSign, app SDK + 30 apps. | Designer is the largest single feature and doesn't block selling, so it comes after the MVP earns feedback. |
+| 23–38 | **Phase 2** | Designer (about 12 weeks with 2 FE + 1 BE), data sources, operational schedule, SSO/audit/API, sub-accounts/white-label, BrightSign, app SDK + 30 apps. | Designer is the largest single feature and doesn't block selling, so it comes after the MVP earns feedback. |
 
-## 7. Estimate (engineer-weeks)
+## 7. Estimate (engineer-weeks, with AI)
 
-| Epic | Eng-wks |
-|---|---|
-| Platform foundations (CI/CD, IaC, auth, tenancy, observability) | 10 |
-| Device protocol, pairing, gateway, heartbeat | 8 |
-| Player core (renderer, timeline, schedule eval, cache, offline, transitions) | 16 |
-| Player shells: Android 6 · Electron 4 · Tizen + webOS 6 | 16 |
-| Media pipeline (upload, transcode, thumbnails, doc → pages) | 7 |
-| Asset library UI (folders, search, share, trash) | 6 |
-| Playlists (nested, tag rules, transitions) | 7 |
-| Schedules engine + calendar UI | 8 |
-| Manifest compiler, push to screens, bulk edit | 6 |
-| App framework + 8 apps | 10 |
-| Split screen / zones | 4 |
-| Teams, roles, invites | 4 |
-| Billing and entitlements (Stripe, plan × device, OnHold) | 6 |
-| Device ops (screenshot, reload, status dashboard, alerts) | 4 |
-| Proof of play (ingest, report, CSV) | 4 |
-| **Total** | **116** |
+How I estimate:
+- **Base** is what a senior engineer would need without AI help.
+- **AI factor** is how much of that base remains when the team uses AI coding assistants (code generation, tests, refactors, docs). It is not one flat number:
+  - **0.60–0.70:** CRUD screens, UI, app integrations and test scaffolding, where most of the code is predictable.
+  - **0.80–0.85:** product logic that AI drafts well but a person must design and review (playlists, schedules, player core).
+  - **0.90–1.00:** device quirks, billing and security, where time goes into testing on real hardware, reading vendor docs and checking correctness, not typing code.
+- **Focus factor 0.8:** an engineer delivers about 4 days of feature work a week once meetings, reviews and support are counted. v1 of this plan left this out, which made the buffer look like 30% when it was not.
 
-Capacity is 7 engineers × 22 weeks = **154 eng-weeks**. That leaves a **~30% buffer** over 116 for integration, device quirks and onboarding. I size each epic as a 1–2 person team for N weeks, which is how I would staff it.
+| Epic | Base | AI factor | With AI |
+|---|---:|---:|---:|
+| Platform foundations (CI/CD, IaC, auth + MFA, tenancy, observability) | 11 | 0.80 | 8.8 |
+| Device protocol, pairing, gateway, heartbeat | 8 | 0.90 | 7.2 |
+| Player core (renderer, timeline, schedule eval, cache, offline, transitions) | 16 | 0.85 | 13.6 |
+| Player shells: Android 7 · Electron 4 · Tizen + webOS 8 | 19 | 0.95 | 18.1 |
+| Media pipeline (upload, transcode, thumbnails, doc → pages) | 7 | 0.85 | 6.0 |
+| CMS shell, design system, asset library UI, global search | 8 | 0.65 | 5.2 |
+| Playlists (nested, sub-playlist schedule, tag rules, transitions) | 7 | 0.80 | 5.6 |
+| Schedules engine + calendar UI | 8 | 0.85 | 6.8 |
+| Manifest compiler, push to screens, bulk edit | 6 | 0.90 | 5.4 |
+| App framework + 8 apps | 10 | 0.70 | 7.0 |
+| Split screen / zones | 4 | 0.85 | 3.4 |
+| Teams, built-in + custom roles, invites | 6 | 0.75 | 4.5 |
+| Content approval workflow | 3 | 0.80 | 2.4 |
+| Billing and entitlements (Stripe, plan × device, trial → Free downgrade, OnHold) | 8 | 0.90 | 7.2 |
+| Device ops (screenshot, reload, status dashboard, alerts) | 4 | 0.80 | 3.2 |
+| Proof of play (ingest, report, CSV, plan-gated) | 4 | 0.80 | 3.2 |
+| E2E test automation + simulated-player load harness | 4 | 0.60 | 2.4 |
+| Security review and hardening | 2 | 1.00 | 2.0 |
+| **Total MVP** | **135** | **0.83** | **112** |
 
-Assumptions:
-- The team is staffed from week 1.
+What changed from v1 (116 engineer-weeks):
+- **Added work I had missed:** content approval (3), custom roles and MFA (+3), CMS shell and design system (+2), E2E/load harness (4) and security (2).
+- **Raised estimates:** Tizen/webOS store submission and signing (+2), Android kiosk/OTA (+1), and billing for trial → Free downgrade (+2).
+
+**Capacity:** 7 engineers × 22 weeks × 0.8 focus = **123 engineer-weeks**.
+- **With AI:** 112 needed, **~10% buffer**. That is thin, so the cut line is set in advance: if velocity at the end of M1 is below plan, Tizen/webOS move to Phase 2 (saves 8).
+- **Without AI:** 135 needed, which is 24 weeks for the same team. AI is what holds the 22-week date; it does not shrink the team.
+
+**Phase 2**
+
+| Epic | Base | AI factor | With AI |
+|---|---:|---:|---:|
+| Designer + template library | 36 | 0.75 | 27.0 |
+| Data sources / repeaters (Sheets, Excel, API) | 8 | 0.75 | 6.0 |
+| Operational schedule (HDMI-CEC / RS-232, native hooks) | 6 | 0.95 | 5.7 |
+| Sync play and video wall | 8 | 0.95 | 7.6 |
+| SAML SSO, audit log, API keys, webhooks | 8 | 0.75 | 6.0 |
+| Sub-accounts, sub-account billing, white-label, custom domain | 6 | 0.85 | 5.1 |
+| BrightSign shell | 4 | 0.95 | 3.8 |
+| App SDK + ~30 more apps | 16 | 0.60 | 9.6 |
+| Mobile admin app | 8 | 0.70 | 5.6 |
+| **Total Phase 2** | **100** | **0.76** | **76** |
+
+16 weeks × 7 × 0.8 = 90 engineer-weeks, so 76 leaves ~18% buffer. Phase 2 gets a higher AI saving than the MVP because more of it is UI and integrations.
+
+**Assumptions:**
+- The team is staffed from week 1 and every engineer already uses an AI coding assistant daily. There is no ramp-up on the tools.
+- AI output goes through the same code review and tests as human code. Review time is already inside the factors.
 - Product/UX decisions follow the existing product, so there is no discovery phase.
-- QA has a device lab: 2 of each shell platform.
+- QA has a device lab with 2 units of each shell platform.
+- QA and the designer/PM are not counted in engineer-weeks.
 
 If the team had 5 engineers, I would cut Tizen/webOS and the apps down to 4, rather than stretch the date.
 
@@ -152,7 +192,8 @@ If the team had 5 engineers, I would cut Tizen/webOS and the apps down to 4, rat
 | Apps that need OAuth (Google, Microsoft) and token refresh on unattended screens | Tokens stay server side and are refreshed by a server-side proxy, so the player never holds refresh tokens |
 | Fan-out when one playlist is used by 10k screens | Incremental manifest compile + CDN; devices fetch manifests, the gateway only sends a version number |
 | Storage and egress costs | Content-addressed dedupe; transcode to sensible bitrates; delta downloads only |
-| Scope creep toward the ~150 apps | The app SDK in Phase 2 turns apps into configuration + a web bundle, not core work |
+| AI saving does not materialise (review load, wrong code in device or billing paths) | AI factors are per epic and conservative where correctness matters; re-measure velocity at end of M1 and cut Tizen/webOS to Phase 2 if below plan |
+| Scope creep toward the 133 apps | The app SDK in Phase 2 turns apps into configuration + a web bundle, not core work |
 
 ## 9. Questions I would ask OptiSigns before starting
 
