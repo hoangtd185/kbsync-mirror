@@ -27,7 +27,7 @@ Without Docker: `pip install -r requirements.txt && python main.py`.
 ## How it works
 
 - **Scrape:** the Zendesk Help Center API (`/api/v2/help_center/en-us/articles.json`) returns only the article body,
-  so nav, headers and widgets never enter the pipeline. All 414 published articles are pulled, not just 30.
+  so nav, headers and widgets never enter the pipeline. Every published article is pulled (413 on 2026-10-16), not just 30.
 - **Clean:** each article goes from BeautifulSoup to `markdownify` and is saved as `articles/<id>-<slug>.md`.
   - Kept: headings, code, tables, images (with their alt text), and links (relative links stay relative).
   - Fixed: Zendesk TOC anchors are re-pointed at the Markdown heading anchors, "NOTE/IMPORTANT" layout tables become blockquotes, and iframes become links.
@@ -42,17 +42,34 @@ Without Docker: `pip install -r requirements.txt && python main.py`.
   - All state lives in the store itself, so the job is stateless and needs no database or volume.
   - Hashing the output rather than trusting `updated_at` also re-uploads articles when the cleaner itself improves.
 - **Daily job:** GitHub Actions ([`daily-sync.yml`](.github/workflows/daily-sync.yml)) builds the Dockerfile and runs it at 02:17 UTC.
+  - Why GitHub Actions: it is free, every run has a public log, and it runs the same Docker image, so moving to Cloud Run Jobs or a DigitalOcean job only changes the scheduler.
   - Counts are written to the run summary.
   - `runs/last_run.json`, the full log and the Markdown snapshot are kept as a run artefact.
 
 ## Daily job logs
 
-Latest runs: **<ADD LINK: https://github.com/USER/REPO/actions/workflows/daily-sync.yml>**
+All runs: **https://github.com/hoangtd185/kbsync-mirror/actions/workflows/daily-sync.yml**
 
-Example `last_run.json`:
+- **First run:** 413 articles were added, about 980 chunks, in 9 minutes.
+- **Later run** (`last_run.json`): only the one article whose cleaned Markdown changed was uploaded; the other 412 were skipped by hash.
 
 ```json
-<PASTE FROM FIRST RUN>
+{
+  "started_at": "2026-10-16T02:25:15+00:00",
+  "articles_scraped": 413,
+  "store": "fileSearchStores/optibotkb-3k1b1ekmi2gh",
+  "added": 1,
+  "updated": 0,
+  "skipped": 412,
+  "removed": 0,
+  "failed": 0,
+  "failed_article_ids": [],
+  "files_embedded": 1,
+  "chunks_embedded_estimate": 4,
+  "chunks_in_store_estimate": 984,
+  "chunking": {"max_tokens_per_chunk": 400, "max_overlap_tokens": 60},
+  "duration_s": 9.6
+}
 ```
 
 ## Assistant
