@@ -46,8 +46,8 @@ So what a screen shows at any moment is the result of evaluating a recursive tre
 This changed the plan in three ways:
 
 1. **One polymorphic `ContentNode` model** (asset | content app | playlist | layout | schedule) instead of separate tables wired together ad hoc. The server compiles each screen's tree into a versioned, flattened **device manifest**: every media URL with a hash, plus the time rules. It rejects cycles at save time. The player never queries the CMS; it only reads manifests.
-2. **The player renderer is a recursive zone/timeline evaluator from week 3**, not a slideshow. When Designer arrives in Phase 2 it becomes one more node type, not a player rewrite. Without this, I would have budgeted for a player rework around month 7.
-3. **Split Screen moved into the MVP.** Once zones exist in the renderer, it costs about 4 engineer-weeks, and it is the most common "advanced" layout customers ask for.
+2. **The player renderer is a recursive zone/timeline evaluator from week 3**, not a slideshow. When Designer arrives in Phase 2 it becomes one more node type, not a player rewrite. A slideshow-style player would have to be reworked at that point, after customers already depend on it.
+3. **Split Screen moved into the MVP.** Once zones exist in the renderer, it costs about 4 engineer-weeks, and it is used widely: 52 of the 413 help-center articles mention Split Screen.
 
 ## 4. Scope
 
