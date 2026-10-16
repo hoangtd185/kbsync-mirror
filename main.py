@@ -126,8 +126,8 @@ def main() -> int:
         uploaded += [d for d, _ in plan.to_update if d.article_id not in failures]
         report.update(
             store=store.name,
-            added=len(plan.to_add),
-            updated=len(plan.to_update),
+            added=sum(d.article_id not in failures for d in plan.to_add),
+            updated=sum(d.article_id not in failures for d, _ in plan.to_update),
             skipped=len(plan.unchanged),
             removed=len(plan.to_remove),
             failed=len(failures),

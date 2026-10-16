@@ -64,7 +64,19 @@ class FileSearchStore:
             docs.append(RemoteDoc(name=doc.name, article_id=meta["article_id"], content_hash=meta.get("content_hash", "")))
         return docs
 
-    def upload(self, doc: LocalDoc) -> None:
+    def upload(self, doc: LocalDoc, attempts: int = 3) -> None:
+        """Upload and wait for indexing. A resumable upload can be dropped server-side
+        ("Upload has already been terminated", HTTP 400), so the whole upload is retried."""
+        for attempt in range(1, attempts + 1):
+            try:
+                return self._upload_once(doc)
+            except (errors.APIError, RuntimeError) as exc:
+                if attempt == attempts:
+                    raise
+                log.warning("Upload of %s failed (%s), retrying (%d/%d)", doc.article_id, exc, attempt, attempts)
+                time.sleep(2**attempt)
+
+    def _upload_once(self, doc: LocalDoc) -> None:
         op = _retry(
             self.client.file_search_stores.upload_to_file_search_store,
             file_search_store_name=self.name,
