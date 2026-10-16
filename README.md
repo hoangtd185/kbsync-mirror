@@ -31,7 +31,7 @@ Without Docker: `pip install -r requirements.txt && python main.py`.
 - **Clean:** each article goes from BeautifulSoup to `markdownify` and is saved as `articles/<id>-<slug>.md`.
   - Kept: headings, code, tables, images (with their alt text), and links (relative links stay relative).
   - Fixed: Zendesk TOC anchors are re-pointed at the Markdown heading anchors, "NOTE/IMPORTANT" layout tables become blockquotes, and iframes become links.
-  - Removed: scripts, styles, and the marketing sign-off.
+  - Removed: scripts, styles, the marketing sign-off, and inline base64 images (their alt text is kept). One article embedded a 130 KB PNG that stalled indexing.
   - Every file starts with `# Title` and an `Article URL:` line, which is what the bot cites.
 - **Chunking:** whitespace chunker, **400 tokens per chunk, 60 overlap**.
   - Articles are step-by-step guides whose sections run about 100–300 words, so a chunk usually holds a whole section plus its heading.

@@ -94,6 +94,10 @@ class _Converter(MarkdownConverter):
         # Drop width/height/title noise; keep only the alt text and source.
         alt = (el.get("alt") or "").replace("\n", " ").strip()
         src = el.get("src") or ""
+        if src.startswith("data:"):
+            # Inline base64 images are one huge unbreakable "word": useless for retrieval and
+            # they stall the whitespace chunker during indexing. Keep only the description.
+            return f"*[Image: {alt}]*" if alt else ""
         return f"![{alt}]({src})" if src else ""
 
 

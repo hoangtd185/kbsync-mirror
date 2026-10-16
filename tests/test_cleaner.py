@@ -76,3 +76,9 @@ def test_render_article_has_title_and_citation_url():
 
 def test_heading_anchor_matches_github_style():
     assert heading_anchor("What You'll Need") == "what-youll-need"
+
+
+def test_inline_base64_image_is_dropped_but_alt_kept():
+    md = html_to_markdown('<p>Scan it:</p><img src="data:image/png;base64,' + "A" * 5000 + '" alt="QR code">')
+    assert "base64" not in md
+    assert "*[Image: QR code]*" in md
