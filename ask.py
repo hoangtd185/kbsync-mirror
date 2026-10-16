@@ -5,9 +5,10 @@
 
 import logging
 import sys
+import time
 
 from google import genai
-from google.genai import types
+from google.genai import errors, types
 
 from kbsync.config import Settings
 
@@ -25,14 +26,21 @@ def main() -> int:
     client = genai.Client(api_key=settings.api_key)
     store = next(s for s in client.file_search_stores.list() if s.display_name == settings.store_display_name)
 
-    response = client.models.generate_content(
-        model=settings.model,
-        contents=question,
-        config=types.GenerateContentConfig(
-            system_instruction=SYSTEM_PROMPT,
-            tools=[types.Tool(file_search=types.FileSearch(file_search_store_names=[store.name]))],
-        ),
+    config = types.GenerateContentConfig(
+        system_instruction=SYSTEM_PROMPT,
+        tools=[types.Tool(file_search=types.FileSearch(file_search_store_names=[store.name]))],
     )
+    for attempt in range(1, 6):
+        try:
+            response = client.models.generate_content(model=settings.model, contents=question, config=config)
+            break
+        except errors.APIError as exc:
+            # 503 "high demand" and 429 are temporary on the Gemini side.
+            if exc.code not in (429, 503) or attempt == 5:
+                raise
+            delay = 5 * attempt
+            print(f"Gemini busy ({exc.code}), retrying in {delay}s ({attempt}/5)...", file=sys.stderr)
+            time.sleep(delay)
     print(f"Q: {question}\n")
     print(response.text)
 
