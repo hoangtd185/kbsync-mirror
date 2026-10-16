@@ -26,9 +26,10 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          mkdir -p runs articles && chmod 777 runs articles
+          mkdir -p runs articles
           set -o pipefail
-          docker run --rm -e GEMINI_API_KEY \
+          # Run as the runner's user so the container can overwrite the checked-out articles.
+          docker run --rm -e GEMINI_API_KEY --user "$(id -u):$(id -g)" \
             -v "$PWD/runs:/app/runs" -v "$PWD/articles:/app/articles" \
             kbsync 2>&1 | tee runs/job.log
 
