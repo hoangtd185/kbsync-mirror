@@ -75,5 +75,6 @@ All runs: **https://github.com/hoangtd185/kbsync-mirror/actions/workflows/daily-
 ## Assistant
 
 The system prompt is used verbatim (see `ask.py`) against the same File Search store.
+The screenshot was taken with `GEMINI_MODEL=gemini-3.6-flash` because the default `gemini-3.8-flash` was returning 503 (high demand) at the time; any model with File Search works against the same store.
 
 ![OptiBot answering "How do I add a YouTube video?" with cited article URLs](docs/screenshot.png)
