@@ -6,6 +6,7 @@ article body: site navigation, headers, footers and widgets never enter the pipe
 
 import logging
 import re
+import time
 from dataclasses import dataclass
 
 import requests
@@ -47,6 +48,23 @@ def _session() -> requests.Session:
     return session
 
 
+def _get_json(session: requests.Session, url: str, attempts: int = 4) -> dict:
+    """GET a page of results. The adapter retries failed connections and 5xx responses;
+    this also retries a connection that drops while the body is being read."""
+    for attempt in range(1, attempts + 1):
+        try:
+            resp = session.get(url, timeout=30)
+            resp.raise_for_status()
+            return resp.json()
+        except (requests.ConnectionError, requests.Timeout, requests.exceptions.ChunkedEncodingError) as exc:
+            if attempt == attempts:
+                raise
+            delay = 2**attempt
+            log.warning("Fetching %s failed (%s), retrying in %ss (%d/%d)", url, exc, delay, attempt, attempts)
+            time.sleep(delay)
+    raise AssertionError("unreachable")
+
+
 def fetch_articles(base_url: str, locale: str, limit: int | None = None) -> list[Article]:
     """Return published articles, most recently updated first, up to `limit`."""
     session = _session()
@@ -56,9 +74,7 @@ def fetch_articles(base_url: str, locale: str, limit: int | None = None) -> list
     )
     articles: list[Article] = []
     while url and (limit is None or len(articles) < limit):
-        resp = session.get(url, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
+        data = _get_json(session, url)
         for raw in data["articles"]:
             if raw.get("draft") or not raw.get("body"):
                 continue
