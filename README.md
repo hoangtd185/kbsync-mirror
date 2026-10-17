@@ -1,7 +1,5 @@
 # kbsync: help-center mirror for OptiBot
 
-> Part 2 (SCIO clone plan) is in [`part2/SCIO-clone-plan.md`](part2/SCIO-clone-plan.md).
-
 Scrapes every published article from `support.optisigns.com` to clean Markdown, uploads it to a
 **Gemini File Search store** through the API, and re-syncs it daily, uploading only what changed.
 
